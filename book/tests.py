@@ -1,10 +1,10 @@
-from django.core.exceptions import FieldError
+from django.core.exceptions import FieldError, FieldDoesNotExist
 from django.db import connection, OperationalError
 from django.db.models import F, QuerySet, Count, Value, Subquery, OuterRef, CharField
 from django.shortcuts import get_object_or_404
 from django.test import TestCase
 
-from book.models import Book, NewBook, NewBookV2, User, PostLike, UserProfile
+from book.models import Book, NewBook, NewBookV2, User, PostLike, UserProfile, Author
 from core.logger import QueryLogger
 from core.tests.dummy import 더미_데이터_생성
 
@@ -225,6 +225,31 @@ class TestORM(TestCase):
                     output_field=CharField()
                 )
             ))
+
+    def test_로우_함수_활용(self):
+        더미_데이터_생성()
+        # 기본 조회
+        users = UserProfile.objects.raw("SELECT * FROM user_profile")
+        for user in users:
+            self.assertTrue(isinstance(user, UserProfile))
+
+        # 다른 테이블 데이터 조회
+        ql = QueryLogger(is_print=False)
+        with connection.execute_wrapper(ql):
+            users = UserProfile.objects.raw("SELECT * FROM author")
+            for user in users:
+                # UserProfile 객체로 조회된다
+                self.assertTrue(isinstance(user, UserProfile))
+                # 단순히 pk 만 일치 시켜 데이터를 가져온다
+                # => raw 는 데이터 전체를 가져오는게 아니라 pk 만 가져온다
+                # => 심지어 모델에 포함된 데이터를 조회 할때도 n+1 이슈가 발생(매번 쿼리 호출)
+                self.assertEqual(user.name, UserProfile.objects.get(pk=user.pk).name)
+
+        # Primary Key 타입이 다른 경우 오류 발생
+        with self.assertRaises(FieldDoesNotExist):
+            users = UserProfile.objects.raw("SELECT * FROM user")
+            for user in users:
+                self.assertTrue(isinstance(user, UserProfile))
 
     def test_동일한_형태의_두_테이블_결합(self):
         더미_데이터_생성()
