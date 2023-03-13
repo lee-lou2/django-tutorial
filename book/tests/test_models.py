@@ -4,7 +4,7 @@ from django.db.models import F, QuerySet, Count, Value, Subquery, OuterRef, Char
 from django.shortcuts import get_object_or_404
 from django.test import TestCase
 
-from book.models import Book, NewBook, NewBookV2, User, PostLike, UserProfile, Author
+from book.models.book import Book, NewBook, NewBookV2, User, PostLike, UserProfile
 from core.logger import QueryLogger
 from core.tests.dummy import 더미_데이터_생성
 
