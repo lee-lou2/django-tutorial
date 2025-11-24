@@ -78,5 +78,5 @@ Celery, Signals, 커스텀 미들웨어, GraphQL 연동
 
 ---
 
-**문의**: [lee@lou2.kr](mailto:lee@lou2.kr)  
-**사이트**: [https://django-tutorial.lou2.kr](https://django-tutorial.lou2.kr)
+**Contact**: [lee@lou2.kr](mailto:lee@lou2.kr)  
+**Django Boilerplate**: [https://github.com/lee-lou2/django-boilerplate](https://github.com/lee-lou2/django-boilerplate)
